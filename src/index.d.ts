@@ -60,3 +60,13 @@ export {
   KxcoResponseError,
   webhook,
 } from 'kxco-post-quantum-webhook'
+
+// ── Chain relay client ────────────────────────────────────────────────────
+export {
+  KxcoChain,
+  KxcoChainError,
+  buildIntent,
+  buildSigningMessage,
+  randomNonce,
+  canonicalize,
+} from 'kxco-pq-chain'
