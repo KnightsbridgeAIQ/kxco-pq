@@ -1,6 +1,6 @@
 {
   "name": "kxco-pq",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "KXCO full post-quantum stack — identity, HSM, audit, attestation, encrypted channels, file encryption, webhook signing. One install.",
   "keywords": [
     "post-quantum",
@@ -56,7 +56,8 @@
     "node": ">=20.19"
   },
   "dependencies": {
-    "kxco-pq-chain": "^1.0.0",
+    "kxco-pq-agent": "^1.0.0",
+    "kxco-pq-chain": "^1.1.0",
     "kxco-pq-sdk": "^1.0.2",
     "kxco-pq-tls": "^1.0.6",
     "kxco-pq-vault": "^1.0.6",

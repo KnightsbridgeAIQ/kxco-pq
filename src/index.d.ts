@@ -70,3 +70,12 @@ export {
   randomNonce,
   canonicalize,
 } from 'kxco-pq-chain'
+
+// ── Agent identity ────────────────────────────────────────────────────────
+export {
+  KxcoAgentIdentity,
+  AgentChainClient,
+  KxcoPqAgentError,
+  validateScope,
+  hashScope,
+} from 'kxco-pq-agent'
