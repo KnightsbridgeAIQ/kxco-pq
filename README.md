@@ -5,152 +5,129 @@
 [![node](https://img.shields.io/node/v/kxco-pq.svg)](https://nodejs.org)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-The full KXCO post-quantum stack in one install.
+The complete KXCO post-quantum stack in one package.
 
 ```sh
 npm install kxco-pq
 ```
 
-Everything from all KXCO PQC packages is re-exported from this single entry point — identity, HSM, audit logging, attestation, encrypted channels, file encryption, and webhook signing.
+Every export from all KXCO PQC packages is available from this single entry point. One install, one import source, no version juggling across sub-packages.
+
+---
+
+## When to use this
+
+Use `kxco-pq` when you want the full stack without managing individual package versions. It is the right choice for new projects, backend services that touch identity and chain together, and integrations that span more than two sub-packages.
+
+## When to use individual packages
+
+Use the individual packages when you need only part of the stack and want minimal dependencies. If your service only verifies webhooks, install `kxco-post-quantum-webhook`. If it only encrypts files, install `kxco-pq-vault`. The à la carte options are listed at the bottom of this file.
+
+---
+
+## Install
+
+```sh
+npm install kxco-pq
+```
+
+Requires Node.js 20.19 or later.
 
 ---
 
 ## What's included
 
-| Module | Package | What it does |
-|--------|---------|-------------|
-| **Identity** | `kxco-pq-sdk` | ML-DSA-65 hierarchical credentials — institution issues signed user credentials after KYC. Chain verifiable offline. |
-| **HSM** | `kxco-pq-hsm` | Encrypted key storage: in-memory, file (Argon2id + AES-256-GCM), or PKCS#11 hardware. |
-| **Audit log** | `kxco-pq-audit` | Tamper-evident, hash-chained, ML-DSA-signed operation log. |
-| **Attestation** | `kxco-pq-attest` | Sign arbitrary payloads — documents, trade confirmations, regulatory submissions. |
-| **Channels** | `kxco-pq-tls` | Hybrid ML-KEM-768 + X25519 key exchange. AES-256-GCM data encryption. Wraps Node streams and WebSockets. |
-| **Vault** | `kxco-pq-vault` | ML-KEM-768 envelope encryption for files. Multi-recipient. Resistant to harvest-now-decrypt-later. |
-| **Webhooks** | `kxco-post-quantum-webhook` | HMAC-SHA-256 + ML-DSA-65 dual-signed webhook delivery and verification. Express / Fastify / Hono / Workers / Vercel adapters. |
-| **Primitives** | `kxco-post-quantum` | Raw ML-DSA-65, ML-KEM-768, deterministic key derivation, fingerprinting. |
+| Sub-package | Exports | Description |
+|---|---|---|
+| `kxco-pq-sdk` | `KxcoIdentity`, `AuditedHsm`, `PqHsm`, `MemoryBackend`, `FileBackend`, `Pkcs11Backend`, `AuditLog`, `FileAuditLog`, `attest`, `verify`, `mlDsa`, `mlKem`, `fingerprint`, `kidEquals`, `KxcoPqSdkError` | ML-DSA-65 hierarchical identity credentials, encrypted HSM key storage, tamper-evident audit log, and attestation signing |
+| `kxco-pq-tls` | `wrapStream`, `wrapWebSocket`, `PqTlsWebSocket`, `initiatorHandshake`, `responderHandshake`, `KxcoPqTlsError` | Hybrid ML-KEM-768 + X25519 key exchange with AES-256-GCM encryption; wraps Node.js streams and WebSockets |
+| `kxco-pq-vault` | `encryptPayload`, `decryptPayload`, `encodePublicKey`, `decodePublicKey`, `generateDek`, `generateNonce`, `wrapDek`, `unwrapDek`, `serializeHeader`, `parseEnvelope`, `parseHeaderText`, `computeKid`, `resolveRecipient`, `readIdentity`, `KxcoVaultError` | ML-KEM-768 envelope encryption for files and payloads; supports multiple recipients |
+| `kxco-post-quantum-webhook` | `createSigner`, `createVerifier`, `signedFetch`, `signedEnvelope`, `signResponse`, `verifiedFetch`, `isStreamingBody`, `webhook`, `KxcoResponseError` | Dual-signed webhook delivery and verification — HMAC-SHA-256 plus ML-DSA-65; works with Express, Fastify, Hono, Workers, and Vercel |
+| `kxco-pq-chain` | `KxcoChain`, `KxcoChainError`, `buildIntent`, `buildSigningMessage`, `randomNonce`, `canonicalize` | Relay client for the Armature L1 chain — build, sign, and submit intents |
+| `kxco-pq-agent` | `KxcoAgentIdentity`, `AgentChainClient`, `validateScope`, `hashScope`, `KxcoPqAgentError` | Post-quantum identity and chain access for AI agents and automated services |
 
-All built on [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) and [FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) via the [audited @noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) library (Cure53, 2024).
+All cryptography uses [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) (ML-KEM-768) and [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) (ML-DSA-65) via the [audited @noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) library (Cure53, 2024). No custom cryptography.
 
 ---
 
-## Usage
+## Quick start
 
-### Identity — issue and verify a user credential
+The example below establishes a post-quantum identity, registers it with the chain, and has an agent sign and submit an intent — all from the same import.
 
 ```js
-import { KxcoIdentity, mlDsa } from 'kxco-pq'
+import {
+  KxcoIdentity,
+  mlDsa,
+  KxcoChain,
+  buildIntent,
+  KxcoAgentIdentity,
+  AgentChainClient,
+  validateScope,
+} from 'kxco-pq'
 
-// Institution: create once, store keypair securely
+// 1. Institution creates and publishes its identity (done once at setup)
 const institution = await KxcoIdentity.create()
+const institutionPublicKey = await institution.getPublicKey()
 
-// User: generate keypair (e.g. in browser after KYC)
+// 2. User keypair generated after KYC; institution issues a credential
 const userKeypair = mlDsa.ml_dsa65.keygen()
-
-// Institution: issue credential after KYC approval (e.g. Sumsub webhook)
 const credential = await institution.issue(userKeypair.publicKey, {
-  role:      'verified-user',
-  authority: ['sign:transactions', 'access:chain'],
-  metadata:  { sumsubApplicantId: 'applicant_42', country: 'GB' },
+  role: 'verified-user',
+  authority: ['sign:transactions', 'submit:intents'],
   expiresIn: '365d',
 })
-
-// User: activate their identity
 const user = KxcoIdentity.fromCredential({ keypair: userKeypair, credential })
 
-// User: sign a document or transaction
-const envelope = await user.attest(
-  { action: 'transfer', amount: 1000, currency: 'GBP' },
-  { purpose: 'trade-confirmation' },
-)
-
-// Anyone: verify the full chain offline
-const result = KxcoIdentity.verifyChain({
-  envelope,
-  credential,
-  institutionPublicKey: await institution.getPublicKey(),
+// 3. Agent identity for an automated service acting on behalf of the user
+const agent = await KxcoAgentIdentity.create({
+  label: 'settlement-agent',
+  scopes: ['submit:intents'],
 })
-// result.valid === true
-```
+const scopeOk = validateScope(agent.scopes, 'submit:intents')
 
-### Encrypted channel between two services
+// 4. Connect to the chain and submit a signed intent
+const chain = new KxcoChain({ endpoint: 'https://chain.kxco.ai' })
+const agentClient = new AgentChainClient({ chain, agent })
 
-```js
-import { initiatorHandshake, responderHandshake, wrapStream } from 'kxco-pq'
-import net from 'node:net'
-
-// Server side
-const server = net.createServer(async (socket) => {
-  const channel = await responderHandshake(socket, { identity: serverIdentity })
-  const secure  = wrapStream(channel)
-  secure.on('data', (msg) => console.log('received:', msg.toString()))
+const intent = buildIntent({
+  action: 'transfer',
+  from: 'account_a',
+  to: 'account_b',
+  amount: '1000',
+  currency: 'GBP',
 })
-
-// Client side
-const socket  = net.connect(port)
-const channel = await initiatorHandshake(socket, { identity: clientIdentity, serverPublicKey })
-const secure  = wrapStream(channel)
-secure.write(Buffer.from('hello over post-quantum TLS'))
-```
-
-### Encrypt a file for multiple recipients
-
-```js
-import { generateDek, generateNonce, wrapDek, encryptPayload } from 'kxco-pq'
-import { mlKem } from 'kxco-pq'
-
-const dek       = generateDek()   // 32-byte AES-256 content key
-const nonce     = generateNonce() // 12-byte GCM nonce
-const plaintext = await fs.readFile('report.pdf')
-
-// Encapsulate DEK for each recipient's ML-KEM public key
-const { ciphertext, sharedSecret } = mlKem.ml_kem768.encapsulate(recipientPublicKey)
-const wrappedDek = wrapDek(sharedSecret, recipientKid, dek)
-
-const ciphertext = encryptPayload(dek, nonce, headerBytes, plaintext)
-```
-
-### Sign and verify a webhook delivery
-
-```js
-import { createSigner, createVerifier, fingerprint } from 'kxco-pq'
-
-const signer = createSigner({
-  hmacSecret: process.env.WEBHOOK_SECRET,
-  pqSecretKey: signingKeypair.secretKey,
-  pqKid: fingerprint(signingKeypair.publicKey),
-})
-
-// On delivery:
-const headers = signer.sign(JSON.stringify(payload), { event: 'kyc.approved' })
-
-// On receipt:
-const verifier = createVerifier({
-  hmacSecret: process.env.WEBHOOK_SECRET,
-  pqPublicKey: signingKeypair.publicKey,
-  pinnedKid: fingerprint(signingKeypair.publicKey),
-  required: 'both',
-})
-const { ok, hmacOk, pqOk } = verifier.verify(incomingHeaders, rawBody)
+const result = await agentClient.submit(intent)
+console.log('submitted:', result.intentId)
 ```
 
 ---
 
-## Install individual packages
+## TypeScript
 
-`kxco-pq` is the full stack. If you only need part of it:
+`kxco-pq` ships full `.d.ts` declarations generated from the sub-packages. No `@types` install needed. All exports are typed end-to-end.
+
+```ts
+import type { KxcoIdentity, KxcoChain, KxcoAgentIdentity } from 'kxco-pq'
+```
+
+---
+
+## Individual packages
+
+Install only what you need:
 
 ```sh
-npm install kxco-pq-sdk        # identity + HSM + audit + attest
-npm install kxco-pq-tls        # encrypted channels only
-npm install kxco-pq-vault      # file encryption only
-npm install kxco-post-quantum-webhook  # webhooks only
-npm install kxco-post-quantum   # raw primitives only
+npm install kxco-pq-sdk                # identity, HSM, audit log, attestation
+npm install kxco-pq-tls                # encrypted channels (streams + WebSockets)
+npm install kxco-pq-vault              # file and payload encryption
+npm install kxco-post-quantum-webhook  # webhook signing and verification
+npm install kxco-pq-chain              # chain relay client
+npm install kxco-pq-agent              # agent identity and chain access
 ```
 
 ---
 
 ## Security
-
-Cryptography: **ML-DSA-65** (NIST FIPS 204) and **ML-KEM-768** (NIST FIPS 203) via [@noble/post-quantum](https://github.com/paulmillr/noble-post-quantum), independently audited by Cure53 in 2024. No custom cryptography.
 
 To report a vulnerability: [security@kxco.ai](mailto:security@kxco.ai) — do not open a public issue.
 
@@ -158,15 +135,8 @@ Advisory feed: [github.com/JackKXCO/kxco-pq/security/advisories](https://github.
 
 ---
 
-## Funding
-
-Supported by [Knightsbridge](https://knightsbridgelaw.com) · Shayne Heffernan · John Heffernan
-
-- [kxco.ai](https://kxco.ai) — KXCO platform
-- [Armature L1](https://chain.kxco.ai) — post-quantum blockchain
-
----
-
 ## License
 
 Apache-2.0 © 2026 KXCO by Knightsbridge
+
+Authors: Shayne Heffernan and John Heffernan
