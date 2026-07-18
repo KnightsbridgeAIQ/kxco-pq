@@ -4,6 +4,7 @@
 [![Socket](https://socket.dev/api/badge/npm/package/kxco-pq)](https://socket.dev/npm/package/kxco-pq)
 [![node](https://img.shields.io/node/v/kxco-pq.svg)](https://nodejs.org)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![CI](https://github.com/KnightsbridgeAIQ/kxco-pq/actions/workflows/ci.yml/badge.svg)](https://github.com/KnightsbridgeAIQ/kxco-pq/actions/workflows/ci.yml)
 
 The complete KXCO post-quantum stack in one package.
 
