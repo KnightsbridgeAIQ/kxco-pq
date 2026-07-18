@@ -131,7 +131,7 @@ npm install kxco-pq-agent              # agent identity and chain access
 
 To report a vulnerability: [security@kxco.ai](mailto:security@kxco.ai) — do not open a public issue.
 
-Advisory feed: [github.com/JackKXCO/kxco-pq/security/advisories](https://github.com/JackKXCO/kxco-pq/security/advisories)
+Advisory feed: [github.com/KnightsbridgeAIQ/kxco-pq/security/advisories](https://github.com/KnightsbridgeAIQ/kxco-pq/security/advisories)
 
 ---
 
