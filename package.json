@@ -1,6 +1,6 @@
 {
   "name": "kxco-pq",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "The complete KXCO post-quantum stack in one package — identity, HSM, audit logging, attestation, encrypted channels, file encryption, webhook signing, chain relay, and agent identity.",
   "keywords": [
     "post-quantum",
@@ -24,10 +24,14 @@
     "verifiable-credential"
   ],
   "license": "Apache-2.0",
-  "author": "KXCO by Knightsbridge <hello@kxco.ai>",
+  "author": "Shayne Heffernan and John Heffernan",
   "contributors": [
-    { "name": "Shayne Heffernan" },
-    { "name": "John Heffernan" }
+    {
+      "name": "Shayne Heffernan"
+    },
+    {
+      "name": "John Heffernan"
+    }
   ],
   "homepage": "https://kxco.ai",
   "repository": {
@@ -56,12 +60,12 @@
     "node": ">=20.19"
   },
   "dependencies": {
+    "kxco-post-quantum-webhook": "^1.0.5",
     "kxco-pq-agent": "^1.0.0",
     "kxco-pq-chain": "^1.1.0",
     "kxco-pq-sdk": "^1.0.2",
     "kxco-pq-tls": "^1.0.6",
-    "kxco-pq-vault": "^1.0.6",
-    "kxco-post-quantum-webhook": "^1.0.5"
+    "kxco-pq-vault": "^1.0.6"
   },
   "scripts": {
     "test": "node --test test/stack.test.js"
