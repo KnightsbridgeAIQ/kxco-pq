@@ -1,7 +1,7 @@
 {
   "name": "kxco-pq",
-  "version": "1.2.1",
-  "description": "The complete KXCO post-quantum stack in one package — identity, HSM, audit logging, attestation, encrypted channels, file encryption, webhook signing, chain relay, and agent identity.",
+  "version": "1.2.3",
+  "description": "The complete KXCO post-quantum stack in one package: identity, HSM, audit logging, attestation, encrypted channels, file encryption, webhook signing, chain relay, and agent identity.",
   "keywords": [
     "post-quantum",
     "pqc",
@@ -32,10 +32,10 @@
   "homepage": "https://kxco.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JackKXCO/kxco-pq.git"
+    "url": "https://github.com/KnightsbridgeAIQ/kxco-pq.git"
   },
   "bugs": {
-    "url": "https://github.com/JackKXCO/kxco-pq/issues"
+    "url": "https://github.com/KnightsbridgeAIQ/kxco-pq/issues"
   },
   "type": "module",
   "sideEffects": false,
@@ -56,12 +56,12 @@
     "node": ">=20.19"
   },
   "dependencies": {
-    "kxco-pq-agent": "^1.0.0",
-    "kxco-pq-chain": "^1.1.0",
-    "kxco-pq-sdk": "^1.0.2",
-    "kxco-pq-tls": "^1.0.6",
-    "kxco-pq-vault": "^1.0.6",
-    "kxco-post-quantum-webhook": "^1.0.5"
+    "kxco-pq-agent": "^1.0.5",
+    "kxco-pq-chain": "^1.1.3",
+    "kxco-pq-sdk": "^1.1.3",
+    "kxco-pq-tls": "^1.0.10",
+    "kxco-pq-vault": "^1.1.0",
+    "kxco-post-quantum-webhook": "^1.1.0"
   },
   "scripts": {
     "test": "node --test test/stack.test.js"
