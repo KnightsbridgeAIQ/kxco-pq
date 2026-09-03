@@ -83,3 +83,34 @@ test('webhook: createSigner + createVerifier round-trip', () => {
   assert.equal(result.hmacOk, true)
   assert.equal(result.pqOk, true)
 })
+
+// A meta package at 2.0.0 that did not expose the modes would be a meta package
+// hiding the thing the major version is about.
+test('the verification modes and seed-form surface are re-exported', async () => {
+  const m = await import('../src/index.js')
+  for (const name of [
+    'verifyAsync', 'generateClassicalKeypair', 'CLASSICAL_ALGORITHMS',
+    'networkConfig', 'networkConfigFromEnv', 'applyVerifyMode', 'readAnchor',
+    'KeyRegistry', 'KxcoPqNetworkError', 'FAILURE', 'VERIFY_MODES', 'CHAIN_ID',
+    'meter', 'usageEvent', 'seed', 'jws', 'backend',
+  ]) {
+    assert.notEqual(m[name], undefined, `${name} must be exported`)
+  }
+  assert.equal(m.CHAIN_ID, 1111111)
+  assert.deepEqual(m.VERIFY_MODES, ['signature', 'anchored', 'anchored+live'])
+})
+
+// The three modes, end to end through the meta package: a signature-mode
+// envelope verifies offline, and the same envelope fails anchored because it
+// carries no anchor.
+test('signature mode verifies offline; anchored refuses an unanchored envelope', async () => {
+  const m = await import('../src/index.js')
+  const keypair = m.mlDsa.ml_dsa65.keygen()
+  const envelope = await m.attest('through the meta package', keypair)
+
+  assert.equal(m.verify(envelope, keypair.publicKey).valid, true)
+
+  const anchored = m.verify(envelope, keypair.publicKey, { mode: 'anchored' })
+  assert.equal(anchored.valid, false)
+  assert.equal(anchored.reason, m.FAILURE.NOT_ANCHORED)
+})

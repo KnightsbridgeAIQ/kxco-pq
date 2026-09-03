@@ -74,7 +74,11 @@ Requires Node.js 20.19 or later.
 | `kxco-pq-chain` | `KxcoChain`, `KxcoChainError`, `buildIntent`, `buildSigningMessage`, `randomNonce`, `canonicalize` | Relay client for the Armature L1 chain — build, sign, and submit intents |
 | `kxco-pq-agent` | `KxcoAgentIdentity`, `AgentChainClient`, `validateScope`, `hashScope`, `KxcoPqAgentError` | Post-quantum identity and chain access for AI agents and automated services |
 
-All cryptography uses [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) (ML-KEM-768) and [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) (ML-DSA-65) via the [audited @noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) library (Cure53, 2024). No custom cryptography.
+All cryptography uses [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) (ML-KEM-768) and [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) (ML-DSA-65) via [`kxco-post-quantum`](https://www.npmjs.com/package/kxco-post-quantum), which wraps [@noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) and prefers OpenSSL 3.5 where the runtime provides it. No custom cryptography.
+
+**`@noble/post-quantum` is not audited.** An earlier version of this README called it "the audited @noble/post-quantum library (Cure53, 2024)". That was wrong. The other Noble packages have been audited, but separately and at different times: `@noble/hashes` by Cure53 in January 2022, `@noble/curves` by Trail of Bits in February 2023, Kudelski in September 2023 and Cure53 in September 2024, and `@noble/ciphers` by Cure53 in September 2024. None of those engagements covered the post-quantum package. Nothing in this stack has had a third-party cryptographic assessment.
+
+What exists instead is evidence you can re-run: every parameter set checked against NIST's own ACVP vectors and cross-checked against OpenSSL, liboqs, Bouncy Castle and dilithium-py/kyber-py in both directions. See [`kxco-post-quantum/AUDIT.md`](https://github.com/KnightsbridgeAIQ/kxco-post-quantum/blob/main/AUDIT.md) and `npm run evidence` in that repository.
 
 ---
 
