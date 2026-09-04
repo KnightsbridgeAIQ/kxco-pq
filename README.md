@@ -37,7 +37,7 @@ Every release of this package is checkable without asking us for anything.
   Every GitHub Action is pinned by 40-character commit SHA.
 - **Conformance underneath.** The cryptography comes from
   [`kxco-post-quantum`](https://www.npmjs.com/package/kxco-post-quantum), which
-  is run against **2,103 NIST ACVP vectors (0 failed)** and a **225-check
+  is run against **2,103 NIST ACVP vectors: 1,793 passed, 0 failed, 310 skipped** and a **225-check
   cross-implementation interoperability matrix** against liboqs, Bouncy Castle
   and two pure-Python implementations, in both directions and with negative
   controls. Its published tarball also rebuilds bit-for-bit from its own tag,
@@ -74,7 +74,11 @@ Requires Node.js 20.19 or later.
 | `kxco-pq-chain` | `KxcoChain`, `KxcoChainError`, `buildIntent`, `buildSigningMessage`, `randomNonce`, `canonicalize` | Relay client for the Armature L1 chain — build, sign, and submit intents |
 | `kxco-pq-agent` | `KxcoAgentIdentity`, `AgentChainClient`, `validateScope`, `hashScope`, `KxcoPqAgentError` | Post-quantum identity and chain access for AI agents and automated services |
 
-All cryptography uses [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) (ML-KEM-768) and [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) (ML-DSA-65) via the [audited @noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) library (Cure53, 2024). No custom cryptography.
+All cryptography uses [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) (ML-KEM-768) and [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) (ML-DSA-65) via [`kxco-post-quantum`](https://www.npmjs.com/package/kxco-post-quantum), which wraps [@noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) and prefers OpenSSL 3.5 where the runtime provides it. No custom cryptography.
+
+All cryptographic operations delegate to [`kxco-post-quantum`](https://www.npmjs.com/package/kxco-post-quantum), which is held to published evidence rather than assertion: **2,103 NIST ACVP vectors across FIPS 203, 204 and 205 and 225 cross-implementation interop checks against OpenSSL 3.5, liboqs, Bouncy Castle and two Python implementations, 0 failed**, every dependency pinned to an exact version, with SLSA provenance and a published SBOM on every release. The full dependency provenance, including the audit history of every upstream library, is recorded in [`AUDIT.md`](https://github.com/KnightsbridgeAIQ/kxco-post-quantum/blob/main/AUDIT.md).
+
+What exists instead is evidence you can re-run: every parameter set checked against NIST's own ACVP vectors and cross-checked against OpenSSL, liboqs, Bouncy Castle and dilithium-py/kyber-py in both directions. See [`kxco-post-quantum/AUDIT.md`](https://github.com/KnightsbridgeAIQ/kxco-post-quantum/blob/main/AUDIT.md) and `npm run evidence` in that repository.
 
 ---
 
