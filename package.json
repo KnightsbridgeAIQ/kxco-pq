@@ -1,7 +1,7 @@
 {
   "name": "kxco-pq",
   "version": "2.0.0",
-  "description": "The complete KXCO post-quantum stack in one package: identity, HSM, audit logging, attestation, encrypted channels, file encryption, webhook signing, chain relay, and agent identity.",
+  "description": "The complete KXCO post-quantum stack in one install: institution identity, HSM custody, tamper-evident audit, attestation, encrypted channels, file encryption, webhook signing, agent identity, and a chain relay whose writes Armature L1 verifies in consensus.",
   "keywords": [
     "post-quantum",
     "pqc",
