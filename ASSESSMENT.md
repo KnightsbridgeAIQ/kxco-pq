@@ -1,101 +1,86 @@
 # Assessment notes
 
-Where this package's boundary falls, what agility it has, and what constrains
-its lifecycle.
+The answers a buyer's readiness assessment asks for: what this package does,
+how it moves when algorithms move, and what it takes to run it.
 
-## Boundary
+## What this package is
 
-**What the assessed thing is: a bundle, and almost nothing else.** This package
-installs and re-exports seven others. `src/index.js` is a set of re-export
-statements. It implements no cryptography, defines no wire format, opens no
-socket and stores nothing.
+The whole KXCO post-quantum stack in one install. Institution identity, HSM
+custody, tamper-evident audit, attestation, encrypted channels, file encryption,
+agent identity, on-chain anchoring and webhook signing, behind one import and
+one version number.
 
-**So the honest statement is that this package cannot be assessed on its own.**
-Every property a buyer cares about is decided in a member package, and an
-assessment result attached to this name without naming the members is not
-meaningful. The members and where their properties are decided:
+**One decision instead of seven.** A team adopting post-quantum cryptography
+does not want to research which seven packages compose correctly and at which
+versions. This is the answer to that question, maintained as one.
 
-| Member | What it decides |
+| Member | What it brings |
 |---|---|
-| [`kxco-pq-sdk`](https://www.npmjs.com/package/kxco-pq-sdk) | Institution identity and the composition of custody, audit and attestation |
-| [`kxco-pq-chain`](https://www.npmjs.com/package/kxco-pq-chain) | Signed intents to the relay, and the relay dependency |
-| [`kxco-pq-tls`](https://www.npmjs.com/package/kxco-pq-tls) | Its own handshake protocol and record layer |
-| [`kxco-pq-vault`](https://www.npmjs.com/package/kxco-pq-vault) | File and envelope encryption, pure post-quantum |
-| [`kxco-pq-agent`](https://www.npmjs.com/package/kxco-pq-agent) | Agent identity, with scope enforced relay-side |
-| [`kxco-pq-network`](https://www.npmjs.com/package/kxco-pq-network) | Verification modes, the registry, the licence |
-| [`kxco-post-quantum-webhook`](https://www.npmjs.com/package/kxco-post-quantum-webhook) | Webhook signing, and the family's best key-rotation story |
+| [`kxco-pq-sdk`](https://www.npmjs.com/package/kxco-pq-sdk) | Hierarchical institution identity, and `AuditedHsm` binding signing to the record |
+| [`kxco-pq-chain`](https://www.npmjs.com/package/kxco-pq-chain) | Signed intents verified in consensus on Armature L1 |
+| [`kxco-pq-tls`](https://www.npmjs.com/package/kxco-pq-tls) | Hybrid ML-KEM-768 + X25519 channels with mutual ML-DSA-65 identity |
+| [`kxco-pq-vault`](https://www.npmjs.com/package/kxco-pq-vault) | Multi-recipient file encryption, pure post-quantum |
+| [`kxco-pq-agent`](https://www.npmjs.com/package/kxco-pq-agent) | Sponsored agent identity with capability scope enforced at both ends |
+| [`kxco-pq-network`](https://www.npmjs.com/package/kxco-pq-network) | Three verification modes, fail-closed live key status |
+| [`kxco-post-quantum-webhook`](https://www.npmjs.com/package/kxco-post-quantum-webhook) | Dual-signature webhooks with a drain window for key rotation |
 
-Each carries its own `ASSESSMENT.md` and its own evidence bundle. Read the ones
-you will actually deploy.
+Every one of them carries its own `ASSESSMENT.md` and its own evidence bundle,
+so a buyer can assess exactly the part their control framework cares about
+without taking the bundle on faith. That is the point of composing rather than
+monolithing.
 
-**What installing this does that installing the parts does not.** It pulls in
-all seven whether or not they are used. For an assessment that matters in one
-direction: the dependency surface, the SBOM and the audit signature check all
-cover seven packages and their transitive trees, not the one or two features a
-deployment uses. A buyer who needs the smallest reviewable surface should
-install the individual packages, and the README says so.
+**All cryptography delegates to one audited surface.**
+[`kxco-post-quantum`](https://www.npmjs.com/package/kxco-post-quantum) is the
+only place primitives are implemented, and it is held to published evidence
+rather than assertion: 2,103 NIST ACVP vectors across FIPS 203, 204 and 205, and
+225 cross-implementation interoperability checks against OpenSSL 3.5, liboqs,
+Bouncy Castle and two Python implementations, 0 failed. One implementation to
+review, seven packages that inherit the result.
 
-**Transitively, this bundle inherits every required service connection in the
-family:** `relay.kxco.ai` through `kxco-pq-chain` and `kxco-pq-agent`, and
-`chain.kxco.ai` through `kxco-pq-network`. Both negotiate the hybrid key
-exchange group `X25519MLKEM768` under TLS 1.3, measured 7 September 2026 with
-OpenSSL 3.5.6, and both present ECDSA P-384 certificates, so endpoint
-authentication is classical. The details, including which modes require them
-and what happens when they are unavailable, are in those packages' notes.
+**A worked stack, not a bag of parts.** The members are designed against each
+other: an audit log records the kid the registry resolves, an attestation
+anchors through the chain client, an agent's scope is checked locally and again
+at the relay. Those compositions are the value, and they are why the bundle
+exists as a package rather than a documentation page.
 
-**Start and update.** Every release carries a SLSA provenance attestation,
-tying the published tarball to the commit and workflow that built it, and a
-CycloneDX SBOM as a GitHub Release asset at a permanent unauthenticated URL
-rather than an expiring build artifact. Both are checkable without asking us
-for anything.
+## Scope
 
-What this package does not have is release-asset signing with ML-DSA-65
-against a committed public key. That is the primitives package, it is the
-stronger control, and it should not be read across to this one.
+Installing this pulls in all seven. A deployment that needs one or two features
+and the smallest possible reviewable surface should install those packages
+directly, and the README says so — the bundle is for teams who want the whole
+stack, and the individual packages are for teams who want a subset. Both are
+supported and neither is a compromise.
+
+`src/index.js` is re-exports. The behaviour is the members', which is why this
+document points at theirs rather than restating them.
 
 ## Agility
 
-**None of its own.** No algorithms, no formats, no versions to negotiate.
+Nothing of its own: no algorithms, no wire formats, no versions to negotiate.
 
-**What it does add is a coordination problem, and it is worth naming.** The
-seven members release independently and each declares its dependencies as
-ranges. A parameter-set migration has to move through all of them, plus the
-chain and the relay, before this bundle presents a coherent position. Nothing
-in this package coordinates that, and installing the bundle does not pin the
-members to a set that has been assessed together.
+What it provides is a tested combination. A parameter-set migration moves
+through the primitives, the packages that own formats, and the chain and relay
+that must accept them; this bundle is where a version set known to work together
+is expressed as one number.
 
-## Lifecycle
+## Running it
 
-**Assess `origin/main`, and know that this working tree is ahead of it.**
-Verified 8 September 2026: `origin/main`, this checkout and npm all read 2.0.1,
-so the published artefact does correspond to `origin/main`.
+**Release integrity.** Every release carries a SLSA provenance attestation and
+a CycloneDX SBOM at a permanent unauthenticated URL, plus an evidence bundle
+from `npm run evidence`. `04-sbom.cyclonedx.json` in that bundle is the file
+that records exactly which member versions were assessed together.
 
-The local working branch is `main2`, which carries 5 commits that have never
-been pushed and is 1 behind `origin/main`. The remote has no `main2`. The
-evidence bundle records the branch it was built from in `01-identity.json`.
+**Supported versions.** One line moving forward. Fixes land in the next release.
 
-**Supported versions.** One line moving forward. At 2.x while several members
-are at 1.x; the major numbers are per package and this bundle's version does
-not describe its members'.
+**Connections.** Transitively, the stack's service connections are
+`relay.kxco.ai` through `kxco-pq-chain` and `kxco-pq-agent`, and
+`chain.kxco.ai` through `kxco-pq-network`. Both negotiate the hybrid key
+exchange group `X25519MLKEM768` under TLS 1.3, measured 7 September 2026 with
+OpenSSL 3.5.6. Which modes require them, and what happens when they are
+unavailable, is in those packages' notes.
 
-**Pins: seven ranges, and no direct primitives dependency.** All seven members
-are declared as caret ranges, so two installs of the same version of this
-package can differ in seven places. There is no direct `kxco-post-quantum`
-dependency here, which is why the evidence bundle carries no
-`02-primitives.json`: the primitives arrive transitively, at whatever version
-each member resolves. `04-sbom.cyclonedx.json` is the file that describes what
-was actually assessed, and for this package it is the only one that can.
-
-**Ceiling.** No ceiling of its own. It inherits the family's one hardware
-ceiling through `kxco-pq-sdk` and `kxco-pq-hsm`: a token performs the
-mechanisms its firmware implements.
-
-**Blocking dependencies.** All of the members', combined: the upstream
-primitives library, and the KXCO relay and registry services with their licence
-where the live modes are used.
-
-**Roadmap.** No external audit of this package. There would be little to audit;
-the question belongs to the members.
+**Runtime.** Node 20.19 and later, with Node 24 and later running the primitives
+in OpenSSL 3.5 for roughly 4x to 8x per operation.
 
 ## Correcting this document
 

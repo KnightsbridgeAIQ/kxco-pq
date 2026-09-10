@@ -1,6 +1,6 @@
 {
   "name": "kxco-pq",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "The complete KXCO post-quantum stack in one install: institution identity, HSM custody, tamper-evident audit, attestation, encrypted channels, file encryption, webhook signing, agent identity, and a chain relay Armature L1 verifies in consensus.",
   "keywords": [
     "post-quantum",
