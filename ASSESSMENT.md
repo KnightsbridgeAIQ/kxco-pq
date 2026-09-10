@@ -43,8 +43,15 @@ OpenSSL 3.5.6, and both present ECDSA P-384 certificates, so endpoint
 authentication is classical. The details, including which modes require them
 and what happens when they are unavailable, are in those packages' notes.
 
-**Start and update.** No release signing of its own. Published through CI with
-npm provenance.
+**Start and update.** Every release carries a SLSA provenance attestation,
+tying the published tarball to the commit and workflow that built it, and a
+CycloneDX SBOM as a GitHub Release asset at a permanent unauthenticated URL
+rather than an expiring build artifact. Both are checkable without asking us
+for anything.
+
+What this package does not have is release-asset signing with ML-DSA-65
+against a committed public key. That is the primitives package, it is the
+stronger control, and it should not be read across to this one.
 
 ## Agility
 
