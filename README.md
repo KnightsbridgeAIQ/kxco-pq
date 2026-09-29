@@ -186,6 +186,6 @@ Advisory feed: [github.com/KnightsbridgeAIQ/kxco-pq/security/advisories](https:/
 
 ## License
 
-Apache-2.0 © 2026 KXCO by Knightsbridge
+Apache-2.0 © 2026 Knightsbridge Financial Ltd, trading as KXCO. See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
 Authors: Shayne Heffernan and John Heffernan
