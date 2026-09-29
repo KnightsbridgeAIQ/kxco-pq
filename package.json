@@ -79,12 +79,15 @@
     "kxco-pq-network": "^1.0.0"
   },
   "scripts": {
-    "test": "node --test test/stack.test.js",
+    "test": "node --test test/stack.test.js test/property.test.js",
     "evidence": "node scripts/build-evidence.mjs"
   },
   "funding": "https://kxco.ai",
   "publishConfig": {
     "provenance": true,
     "access": "public"
+  },
+  "devDependencies": {
+    "fast-check": "4.10.2"
   }
 }
