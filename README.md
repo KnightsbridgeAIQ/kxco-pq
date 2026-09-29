@@ -20,7 +20,7 @@ npm install kxco-pq
 - **Proven underneath.** 1,793 NIST ACVP vectors passed, 0 failed, and 225 interoperability checks against liboqs, Bouncy Castle and the Python reference implementations, 0 failed, per [CONFORMANCE.md](https://github.com/KnightsbridgeAIQ/kxco-post-quantum/blob/main/CONFORMANCE.md).
 - **Verifiable forever.** A signed envelope verifies offline from the envelope and a public key, with no KXCO server in the path, now or in ten years.
 - **Typed end to end.** Full `.d.ts` declarations ship with the package, so there is no `@types` install.
-- **A supply chain you can check.** SLSA provenance and a CycloneDX SBOM on every release, third-party dependencies pinned to exact versions, and every GitHub Action pinned by commit SHA.
+- **A supply chain you can check.** SLSA provenance and a CycloneDX SBOM on every release since 1.2.5, third-party dependencies pinned to exact versions, and every GitHub Action pinned by commit SHA.
 
 **The migration has dates.**
 
@@ -165,10 +165,10 @@ One install covers the stack. Each part is also published on its own:
 
 ## Release integrity
 
-Each release carries a SLSA provenance attestation tying the published tarball to
+Every release since 1.2.5 carries a SLSA provenance attestation tying the published tarball to
 the commit and workflow that built it: verify with `npm audit signatures`, or read
 it from `registry.npmjs.org/-/npm/v1/attestations/kxco-pq@<version>`. A CycloneDX
-SBOM is published as a GitHub Release asset at
+SBOM is published, from v1.2.5, as a GitHub Release asset at
 `releases/download/v<version>/sbom.cyclonedx.json`, a permanent unauthenticated
 URL. Sibling `kxco-*` packages sit on caret ranges so a correctness fix in the
 base package reaches you on the next install, with no release of every package
