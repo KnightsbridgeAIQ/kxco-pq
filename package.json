@@ -1,7 +1,7 @@
 {
   "name": "kxco-pq",
-  "version": "2.0.3",
-  "description": "The complete KXCO post-quantum stack in one install: institution identity, HSM custody, tamper-evident audit, attestation, encrypted channels, file encryption, webhook signing, agent identity, and a chain relay Armature L1 verifies in consensus.",
+  "version": "2.0.4",
+  "description": "Post-quantum security for institutions in one install: identity, HSM key custody, tamper-evident audit, document attestation, encrypted channels, file encryption, webhook signing and AI agent identity, on NIST FIPS 203 and 204.",
   "keywords": [
     "post-quantum",
     "pqc",
@@ -20,7 +20,17 @@
     "file-encryption",
     "webhook",
     "compliance",
-    "verifiable-credential"
+    "verifiable-credential",
+    "quantum-safe",
+    "pqc-migration",
+    "crypto-agility",
+    "harvest-now-decrypt-later",
+    "digital-signature",
+    "key-management",
+    "ai-agent",
+    "tamper-evident",
+    "non-repudiation",
+    "e-signature"
   ],
   "license": "Apache-2.0",
   "author": "Shayne Heffernan and John Heffernan",
