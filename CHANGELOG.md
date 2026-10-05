@@ -1,7 +1,6 @@
 # Changelog
 
-## Unreleased
-
+## 2.1.0
 **ML-DSA-87 and ML-KEM-1024 are exported.** `mlDsa87` and `mlKem1024` are the
 `kxco-post-quantum` modules for the Category 5 parameter sets, re-exported
 beside `mlDsa` and `mlKem`, which stay the default. `kxco-post-quantum` is now
