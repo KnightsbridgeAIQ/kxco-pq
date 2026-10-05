@@ -100,6 +100,31 @@ test('the verification modes and seed-form surface are re-exported', async () =>
   assert.deepEqual(m.VERIFY_MODES, ['signature', 'anchored', 'anchored+live'])
 })
 
+// The Category 5 sets come through the meta package as the wrapper's own
+// modules, and sign, verify and encapsulate at their own sizes.
+test('ML-DSA-87 and ML-KEM-1024 are re-exported from kxco-post-quantum', async () => {
+  const m = await import('../src/index.js')
+  const pq = await import('kxco-post-quantum')
+  assert.equal(m.mlDsa87, pq.mlDsa87)
+  assert.equal(m.mlKem1024, pq.mlKem1024)
+
+  const master = Buffer.alloc(32, 5)
+  const dsa = m.mlDsa87.keypairFromMaster(master)
+  assert.equal(dsa.publicKey.length, 2592)
+  assert.equal(dsa.secretKey.length, 4896)
+  const sig = m.mlDsa87.sign(dsa.secretKey, 'category five')
+  assert.equal(sig.length, 4627 * 2)
+  assert.equal(m.mlDsa87.verify(dsa.publicKey, 'category five', sig), true)
+  // A key of the other set does not verify it.
+  assert.equal(m.mlDsa.verify(m.mlDsa.keypairFromMaster(master).publicKey, 'category five', sig), false)
+
+  const kem = m.mlKem1024.keypairFromMaster(master)
+  assert.equal(kem.publicKey.length, 1568)
+  const { ciphertext, sharedSecret } = m.mlKem1024.encapsulate(kem.publicKey)
+  assert.equal(ciphertext.length, 1568)
+  assert.deepEqual(m.mlKem1024.decapsulate(ciphertext, kem.secretKey), sharedSecret)
+})
+
 // The three modes, end to end through the meta package: a signature-mode
 // envelope verifies offline, and the same envelope fails anchored because it
 // carries no anchor.

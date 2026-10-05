@@ -19,6 +19,13 @@ export {
   kidEquals,
 } from 'kxco-pq-sdk'
 
+// ── Category 5 parameter sets ─────────────────────────────────────────────
+//
+// ML-DSA-87 and ML-KEM-1024, the kxco-post-quantum modules, for callers given
+// either as a requirement. ML-DSA-65 and ML-KEM-768 (mlDsa, mlKem above) stay
+// the default everywhere in the stack.
+export { mlDsa87, mlKem1024 } from 'kxco-post-quantum'
+
 // ── Encrypted channels ────────────────────────────────────────────────────
 export {
   wrapStream,
