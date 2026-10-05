@@ -1,6 +1,6 @@
 {
   "name": "kxco-pq",
-  "version": "2.0.6",
+  "version": "2.1.0",
   "description": "Post-quantum security for institutions in one install: identity, HSM key custody, tamper-evident audit, document attestation, encrypted channels, file encryption, webhook signing and AI agent identity, on NIST FIPS 203 and 204.",
   "keywords": [
     "post-quantum",
@@ -76,7 +76,8 @@
     "kxco-pq-tls": "^1.2.0",
     "kxco-pq-vault": "^1.1.0",
     "kxco-post-quantum-webhook": "^1.2.0",
-    "kxco-pq-network": "^1.0.0"
+    "kxco-pq-network": "^1.0.0",
+    "kxco-post-quantum": "^1.6.0"
   },
   "scripts": {
     "test": "node --test test/stack.test.js test/property.test.js",
