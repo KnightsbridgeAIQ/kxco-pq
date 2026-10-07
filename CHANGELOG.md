@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.2.0 (2026-10-07)
+
+**The stack this installs handles ML-DSA-87 throughout.** ML-DSA-87 is the
+parameter set KXCO recommends for every new key. The dependency floors move to
+the first releases that carry it: `kxco-pq-sdk` ^2.1.0, `kxco-pq-agent` ^1.2.0,
+`kxco-pq-chain` ^2.3.0, `kxco-pq-network` ^1.1.0 and
+`kxco-post-quantum-webhook` ^1.3.0. Under `kxco-pq-sdk` 2.0.x,
+`KxcoIdentity.create({ alg: 'ML-DSA-87' })` ignores `alg` and makes an
+ML-DSA-65 key without saying so. The new floor rules that out. This package's
+ML-DSA-65 tests pass unchanged against the new floors.
+
+**The quick start makes ML-DSA-87 keys.** It passes `alg: 'ML-DSA-87'` to
+`KxcoIdentity.create()` and `KxcoAgentIdentity.create()` and keys the customer
+with `mlDsa87.ml_dsa87.keygen()`. A new test runs those steps and fails on the
+2.1.0 lockfile, which resolved `kxco-pq-sdk` 2.0.0.
+
+**The README names ML-DSA-87 and ML-KEM-1024.** The standards bullet, the
+cryptography line and the identity and webhook rows named ML-DSA-65 and
+ML-KEM-768 only. They now name ML-DSA-87 first. The `kxco-post-quantum` row
+and the source comment no longer call ML-DSA-65 and ML-KEM-768 the default.
+
+The package has no algorithm default of its own: `src/index.js` re-exports
+the sub-packages and decides nothing.
+
 ## 2.1.0
 **ML-DSA-87 and ML-KEM-1024 are exported.** `mlDsa87` and `mlKem1024` are the
 `kxco-post-quantum` modules for the Category 5 parameter sets, re-exported

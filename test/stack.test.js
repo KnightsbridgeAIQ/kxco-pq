@@ -139,3 +139,32 @@ test('signature mode verifies offline; anchored refuses an unanchored envelope',
   assert.equal(anchored.valid, false)
   assert.equal(anchored.reason, m.FAILURE.NOT_ANCHORED)
 })
+
+// The README quick start makes every key ML-DSA-87. That needs kxco-pq-sdk
+// 2.1.0 and kxco-pq-agent 1.2.0 or later: an older SDK ignores `alg` and makes
+// an ML-DSA-65 key without saying so, which is why package.json floors them.
+test('the quick start makes ML-DSA-87 identities that verify', async () => {
+  const m = await import('../src/index.js')
+  const institution = await m.KxcoIdentity.create({ alg: 'ML-DSA-87' })
+  assert.equal(institution.alg, 'ML-DSA-87')
+  assert.equal((await institution.getPublicKey()).length, 2592)
+
+  const customer = m.mlDsa87.ml_dsa87.keygen()
+  const credential = await institution.issue(customer.publicKey, { role: 'verified-user', authority: ['sign:all'] })
+  const user = m.KxcoIdentity.fromCredential({ keypair: customer, credential })
+  const envelope = await user.attest('quick start')
+  const chain = m.KxcoIdentity.verifyChain({
+    envelope, credential, institutionPublicKey: await institution.getPublicKey(),
+  })
+  assert.equal(chain.valid, true)
+
+  const agent = await m.KxcoAgentIdentity.create({
+    sponsor: institution, label: 'Settlement Bot', agentType: 'llm', alg: 'ML-DSA-87',
+    scope: { attestations: { purposes: ['trade-confirmation'] } }, expiresIn: '90d',
+  })
+  assert.equal(agent.alg, 'ML-DSA-87')
+  const { valid } = await m.KxcoAgentIdentity.verify(agent.credential, {
+    sponsorPublicKey: await institution.getPublicKey(),
+  })
+  assert.equal(valid, true)
+})
