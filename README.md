@@ -16,7 +16,7 @@ npm install kxco-pq
 ```
 
 - **The whole stack from one import.** Institution identity, HSM key custody, tamper-evident audit, document attestation, encrypted channels, file encryption, webhook signing, AI agent identity and a chain relay Armature L1 verifies in consensus.
-- **NIST standards throughout.** ML-KEM-768 (FIPS 203) and ML-DSA-65 (FIPS 204), with the maths in OpenSSL 3.5 on Node 24 and later.
+- **NIST standards throughout.** ML-DSA-87 and ML-DSA-65 (FIPS 204), ML-KEM-1024 and ML-KEM-768 (FIPS 203), with the maths in OpenSSL 3.5 on Node 24 and later.
 - **Proven underneath.** 1,793 NIST ACVP vectors passed, 0 failed, and 225 interoperability checks against liboqs, Bouncy Castle and the Python reference implementations, 0 failed, per [CONFORMANCE.md](https://github.com/KnightsbridgeAIQ/kxco-post-quantum/blob/main/CONFORMANCE.md).
 - **Verifiable forever.** A signed envelope verifies offline from the envelope and a public key, with no KXCO server in the path, now or in ten years.
 - **Typed end to end.** Full `.d.ts` declarations ship with the package, so there is no `@types` install.
@@ -50,15 +50,15 @@ Requires Node.js 20.19 or later.
 
 | Sub-package | Exports | Description |
 |---|---|---|
-| `kxco-pq-sdk` | `KxcoIdentity`, `AuditedHsm`, `PqHsm`, `MemoryBackend`, `FileBackend`, `Pkcs11Backend`, `AuditLog`, `FileAuditLog`, `attest`, `verify`, `mlDsa`, `mlKem`, `fingerprint`, `kidEquals`, `KxcoPqSdkError` | ML-DSA-65 hierarchical identity credentials, encrypted HSM key storage, tamper-evident audit log, and attestation signing |
+| `kxco-pq-sdk` | `KxcoIdentity`, `AuditedHsm`, `PqHsm`, `MemoryBackend`, `FileBackend`, `Pkcs11Backend`, `AuditLog`, `FileAuditLog`, `attest`, `verify`, `mlDsa`, `mlKem`, `fingerprint`, `kidEquals`, `KxcoPqSdkError` | ML-DSA-87 and ML-DSA-65 hierarchical identity credentials, encrypted HSM key storage, tamper-evident audit log, and attestation signing |
 | `kxco-pq-tls` | `wrapStream`, `wrapWebSocket`, `PqTlsWebSocket`, `initiatorHandshake`, `responderHandshake`, `KxcoPqTlsError` | Hybrid ML-KEM-768 + X25519 key exchange with AES-256-GCM encryption; wraps Node.js streams and WebSockets |
 | `kxco-pq-vault` | `encryptPayload`, `decryptPayload`, `encodePublicKey`, `decodePublicKey`, `generateDek`, `generateNonce`, `wrapDek`, `unwrapDek`, `serializeHeader`, `parseEnvelope`, `parseHeaderText`, `computeKid`, `resolveRecipient`, `readIdentity`, `KxcoVaultError` | ML-KEM-768 envelope encryption for files and payloads; supports multiple recipients |
-| `kxco-post-quantum-webhook` | `createSigner`, `createVerifier`, `signedFetch`, `signedEnvelope`, `signResponse`, `verifiedFetch`, `isStreamingBody`, `webhook`, `KxcoResponseError` | Dual-signed webhook delivery and verification: HMAC-SHA-256 plus ML-DSA-65; works with Express, Fastify, Hono, Workers, and Vercel |
+| `kxco-post-quantum-webhook` | `createSigner`, `createVerifier`, `signedFetch`, `signedEnvelope`, `signResponse`, `verifiedFetch`, `isStreamingBody`, `webhook`, `KxcoResponseError` | Dual-signed webhook delivery and verification: HMAC-SHA-256 plus ML-DSA-87 or ML-DSA-65; works with Express, Fastify, Hono, Workers, and Vercel |
 | `kxco-pq-chain` | `KxcoChain`, `KxcoChainError`, `buildIntent`, `buildSigningMessage`, `randomNonce`, `canonicalize` | Relay client for the Armature L1 chain: build, sign, and submit intents |
 | `kxco-pq-agent` | `KxcoAgentIdentity`, `AgentChainClient`, `validateScope`, `hashScope`, `KxcoPqAgentError` | Post-quantum identity and chain access for AI agents and automated services |
-| `kxco-post-quantum` | `mlDsa87`, `mlKem1024` | ML-DSA-87 and ML-KEM-1024, the Category 5 parameter sets, beside the ML-DSA-65 and ML-KEM-768 defaults |
+| `kxco-post-quantum` | `mlDsa87`, `mlKem1024` | ML-DSA-87 and ML-KEM-1024, the Category 5 parameter sets, beside ML-DSA-65 and ML-KEM-768 (`mlDsa`, `mlKem`). ML-DSA-87 is the set for a new signing key |
 
-All cryptography uses [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) (ML-KEM-768) and [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) (ML-DSA-65) via [`kxco-post-quantum`](https://www.npmjs.com/package/kxco-post-quantum), which wraps [@noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) and prefers OpenSSL 3.5 where the runtime provides it. No custom cryptography.
+All cryptography uses [NIST FIPS 203](https://csrc.nist.gov/pubs/fips/203/final) (ML-KEM-1024 and ML-KEM-768) and [NIST FIPS 204](https://csrc.nist.gov/pubs/fips/204/final) (ML-DSA-87 and ML-DSA-65) via [`kxco-post-quantum`](https://www.npmjs.com/package/kxco-post-quantum), which wraps [@noble/post-quantum](https://github.com/paulmillr/noble-post-quantum) and prefers OpenSSL 3.5 where the runtime provides it. No custom cryptography.
 
 That base package is held to evidence you can re-run: every parameter set checked against NIST's own ACVP vectors and cross-checked against liboqs, Bouncy Castle and dilithium-py/kyber-py in both directions. See its [CONFORMANCE.md](https://github.com/KnightsbridgeAIQ/kxco-post-quantum/blob/main/CONFORMANCE.md), the audit history of every upstream library in [AUDIT.md](https://github.com/KnightsbridgeAIQ/kxco-post-quantum/blob/main/AUDIT.md), and `npm run evidence` in that repository.
 
@@ -66,16 +66,16 @@ That base package is held to evidence you can re-run: every parameter set checke
 
 ## Quick start
 
-An institution creates its identity, credentials a customer, and sponsors an AI agent that anyone can verify offline, all from the same import.
+An institution creates its identity, credentials a customer, and sponsors an AI agent that anyone can verify offline, all from the same import. Every key here is ML-DSA-87. Keys and signatures made with ML-DSA-65 keep verifying.
 
 ```js
-import { KxcoIdentity, KxcoAgentIdentity, mlDsa } from 'kxco-pq'
+import { KxcoIdentity, KxcoAgentIdentity, mlDsa87 } from 'kxco-pq'
 
 // 1. The institution creates its post-quantum identity, once, at setup
-const institution = await KxcoIdentity.create()
+const institution = await KxcoIdentity.create({ alg: 'ML-DSA-87' })
 
 // 2. After KYC, it issues a customer a signed credential
-const customer = mlDsa.ml_dsa65.keygen()
+const customer = mlDsa87.ml_dsa87.keygen()
 const credential = await institution.issue(customer.publicKey, {
   role: 'verified-user',
   authority: ['sign:transactions'],
@@ -87,6 +87,7 @@ const agent = await KxcoAgentIdentity.create({
   sponsor:   institution,
   label:     'Settlement Bot',
   agentType: 'llm',
+  alg:       'ML-DSA-87',
   scope:     { attestations: { purposes: ['trade-confirmation'] } },
   expiresIn: '90d',
 })

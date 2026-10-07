@@ -21,9 +21,9 @@ export {
 
 // ── Category 5 parameter sets ─────────────────────────────────────────────
 //
-// ML-DSA-87 and ML-KEM-1024, the kxco-post-quantum modules, for callers given
-// either as a requirement. ML-DSA-65 and ML-KEM-768 (mlDsa, mlKem above) stay
-// the default everywhere in the stack.
+// ML-DSA-87 and ML-KEM-1024, the kxco-post-quantum modules. ML-DSA-87 is the
+// set for a new signing key. mlDsa and mlKem above are ML-DSA-65 and
+// ML-KEM-768, so every existing ML-DSA-65 key and signature keeps working.
 export { mlDsa87, mlKem1024 } from 'kxco-post-quantum'
 
 // ── Encrypted channels ────────────────────────────────────────────────────
