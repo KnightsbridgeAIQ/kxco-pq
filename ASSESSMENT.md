@@ -79,7 +79,7 @@ exchange group `X25519MLKEM768` under TLS 1.3, measured 7 September 2026 with
 OpenSSL 3.5.6. Which modes require them, and what happens when they are
 unavailable, is in those packages' notes.
 
-**Runtime.** Node 20.19 and later, with Node 24 and later running the primitives
+**Runtime.** Node 22.12 and later, with Node 24 and later running the primitives
 in OpenSSL 3.5 for roughly 4x to 8x per operation.
 
 ## Correcting this document

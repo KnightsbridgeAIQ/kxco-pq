@@ -42,7 +42,7 @@ Every export from all KXCO PQC packages is available from this single entry poin
 
 Use the individual packages when you need only part of the stack and want minimal dependencies. If your service only verifies webhooks, install `kxco-post-quantum-webhook`. If it only encrypts files, install `kxco-pq-vault`. The full family is listed at the bottom of this file.
 
-Requires Node.js 20.19 or later.
+Requires Node.js 22.12 or later.
 
 ---
 
