@@ -1,6 +1,6 @@
 {
   "name": "kxco-pq",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "Post-quantum security for institutions in one install: identity, HSM key custody, tamper-evident audit, document attestation, encrypted channels, file encryption, webhook signing and AI agent identity, on NIST FIPS 203 and 204.",
   "keywords": [
     "post-quantum",
@@ -72,9 +72,9 @@
   "dependencies": {
     "kxco-pq-agent": "^1.2.0",
     "kxco-pq-chain": "^2.3.0",
-    "kxco-pq-sdk": "^2.1.0",
-    "kxco-pq-tls": "^1.2.0",
-    "kxco-pq-vault": "^1.1.0",
+    "kxco-pq-sdk": "^2.4.0",
+    "kxco-pq-tls": "^2.0.0",
+    "kxco-pq-vault": "^2.0.0",
     "kxco-post-quantum-webhook": "^1.3.0",
     "kxco-pq-network": "^1.1.0",
     "kxco-post-quantum": "^1.6.0"
