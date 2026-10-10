@@ -2,11 +2,11 @@
 
 ## 3.0.0 (2026-10-10)
 
-**Breaking: the default `kxco-pq-tls` handshake is now ML-KEM-1024 with X25519.** The dependency floor moves from `kxco-pq-tls` ^1.2.0 to ^2.0.0. A default tls initiator cannot reach a responder on kxco-pq-tls 1.4 or earlier: the older responder does not know the ML-KEM-1024 hello and closes the connection. Upgrade responders first, or ask the initiator for ML-KEM-768 (available in kxco-pq-tls 2.0.0).
+**Breaking: the default `kxco-pq-tls` handshake is now ML-KEM-1024 with X25519.** The dependency floor moves from `kxco-pq-tls` ^1.2.0 to ^2.0.0. A default tls initiator cannot reach a responder on kxco-pq-tls 1.4 or earlier: the older responder cannot read the ML-KEM-1024 hello and the handshake fails (the kxco-pq-tls README has the version table). Upgrade responders first, or ask the initiator for ML-KEM-768 (available in kxco-pq-tls 2.0.0).
 
 - `kxco-pq-tls` ^2.0.0 (was ^1.2.0): ML-KEM-1024 with X25519 by default, ML-KEM-768 available.
 - `kxco-pq-vault` ^1.4.0 (was ^1.1.0): new envelopes use ML-KEM-1024 by default; ML-KEM-768 envelopes made earlier still decrypt.
-- `kxco-pq-sdk` ^2.4.0 (was ^2.1.0): typings admit `ml-kem-1024` in the HSM keygen. This also carries the `kxco-pq-hsm` 1.8.0 floor, because this package has no direct hsm dependency.
+- `kxco-pq-sdk` ^2.4.0 (was ^2.1.0): typings admit `ml-kem-1024` in the HSM keygen. Through it, `kxco-pq-hsm` ^1.8.0, which kxco-pq-sdk 2.4.0 requires; this package has no direct hsm dependency.
 - No code in this package changed. The README describes the new defaults.
 
 ## 2.3.0 (2026-10-09)
