@@ -18,7 +18,7 @@ versions. This is the answer to that question, maintained as one.
 |---|---|
 | [`kxco-pq-sdk`](https://www.npmjs.com/package/kxco-pq-sdk) | Hierarchical institution identity, and `AuditedHsm` binding signing to the record |
 | [`kxco-pq-chain`](https://www.npmjs.com/package/kxco-pq-chain) | Signed intents verified in consensus on Armature L1 |
-| [`kxco-pq-tls`](https://www.npmjs.com/package/kxco-pq-tls) | Hybrid ML-KEM-768 + X25519 channels with mutual ML-DSA-65 identity |
+| [`kxco-pq-tls`](https://www.npmjs.com/package/kxco-pq-tls) | Hybrid ML-KEM-1024 + X25519 channels by default, with mutual ML-DSA-87 or ML-DSA-65 identity |
 | [`kxco-pq-vault`](https://www.npmjs.com/package/kxco-pq-vault) | Multi-recipient file encryption, pure post-quantum |
 | [`kxco-pq-agent`](https://www.npmjs.com/package/kxco-pq-agent) | Sponsored agent identity with capability scope enforced at both ends |
 | [`kxco-pq-network`](https://www.npmjs.com/package/kxco-pq-network) | Three verification modes, fail-closed live key status |
