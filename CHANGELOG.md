@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.0.1 (2026-10-29)
+
+Dependencies and documentation. No source file changed and the API is the same.
+
+- `kxco-pq-agent` dependency floor moves from `^1.2.0` to `^1.4.1`.
+- `kxco-pq-chain` dependency floor moves from `^2.3.0` to `^2.4.2`.
+- `kxco-pq-sdk` dependency floor moves from `^2.4.0` to `^2.4.2`.
+- `kxco-pq-tls` dependency floor moves from `^2.0.0` to `^2.0.1`.
+- `kxco-pq-vault` dependency floor moves from `^2.0.0` to `^2.0.1`.
+- `kxco-post-quantum-webhook` dependency floor moves from `^1.3.0` to `^1.4.1`.
+- `kxco-pq-network` dependency floor moves from `^1.1.0` to `^1.2.1`.
+- `kxco-post-quantum` dependency floor moves from `^1.6.0` to `^1.13.0`, the current release.
+- Through `kxco-pq-sdk` and `kxco-pq-hsm` 1.9, `koffi` arrives as an optional dependency. kxco-pq-hsm uses it only for on-token ML-KEM decapsulation.
+- ASSESSMENT.md describes kxco-pq-tls 2.x as hybrid ML-KEM-1024 with X25519 by default, with mutual ML-DSA-87 or ML-DSA-65 identity.
+
 ## 3.0.0 (2026-10-10)
 
 **Breaking: the default `kxco-pq-tls` handshake is now ML-KEM-1024 with X25519.** The dependency floor moves from `kxco-pq-tls` ^1.2.0 to ^2.0.0. A default tls initiator cannot reach a responder on kxco-pq-tls 1.4 or earlier: the older responder cannot read the ML-KEM-1024 hello and the handshake fails (the kxco-pq-tls README has the version table). Upgrade responders first, or ask the initiator for ML-KEM-768 (available in kxco-pq-tls 2.0.0).
